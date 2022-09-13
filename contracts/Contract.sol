@@ -4,8 +4,10 @@ pragma solidity ^0.8.13;
 import { ByteHasher } from './helpers/ByteHasher.sol';
 import { IWorldID } from './interfaces/IWorldID.sol';
 import "hardhat/console.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
 
-contract Contract {
+contract Contract is ERC721URIStorage {
     using ByteHasher for bytes;
 
     error InvalidNullifier();
@@ -13,14 +15,27 @@ contract Contract {
     uint256 internal immutable groupId = 1;
     mapping(uint256 => bool) internal nullifierHashes;
 
-    event ProofVerified();
+    event ProofVerified(address user);
 
-    constructor(IWorldID _worldId) {
+    constructor(IWorldID _worldId) ERC721("MyProfile", "PNFT"){
         worldId = _worldId;
     }
 
+    using Counters for Counters.Counter;
+    Counters.Counter private _tokenIds;
+
+    function mintProfileNft(address user, string memory tokenURI) public returns(uint256) {
+        uint256 newItemId = _tokenIds.current();
+        _mint(user, newItemId);
+        _setTokenURI(newItemId, tokenURI);
+
+        _tokenIds.increment();
+        return newItemId;
+    }
+
     function verifyAndExecute(
-        address input,
+        string memory tokenURI,
+        address receiver,
         uint256 root,
         uint256 nullifierHash,
         uint256[8] calldata proof
@@ -32,7 +47,7 @@ contract Contract {
         worldId.verifyProof(
             root,
             groupId,
-            abi.encodePacked(input).hashToField(),
+            abi.encodePacked(receiver).hashToField(),
             nullifierHash,
             abi.encodePacked(address(this)).hashToField(),
             proof
@@ -42,6 +57,7 @@ contract Contract {
         nullifierHashes[nullifierHash] = true;
 
         // logic
-        // Mint profile nft
+        emit ProofVerified(receiver);
+        mintProfileNft(receiver, tokenURI);
     }
 }

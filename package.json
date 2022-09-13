@@ -35,6 +35,7 @@
     },
     "dependencies": {
         "@appliedzkp/semaphore-contracts": "^0.10.0",
+        "@openzeppelin/contracts": "^4.7.3",
         "@worldcoin/world-id-contracts": "^0.1.1",
         "@zk-kit/identity": "^1.4.1",
         "@zk-kit/protocols": "^1.11.1",
