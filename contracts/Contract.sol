@@ -34,7 +34,7 @@ contract Contract is ERC721URIStorage {
     }
 
     function verifyAndExecute(
-        string memory tokenURI,
+        //string memory tokenURI,
         address receiver,
         uint256 root,
         uint256 nullifierHash,
@@ -58,6 +58,6 @@ contract Contract is ERC721URIStorage {
 
         // logic
         emit ProofVerified(receiver);
-        mintProfileNft(receiver, tokenURI);
+        //mintProfileNft(receiver, tokenURI);
     }
 }
