@@ -22,14 +22,29 @@ contract Contract is ERC721URIStorage {
     }
 
     using Counters for Counters.Counter;
-    Counters.Counter private _tokenIds;
+    Counters.Counter private _profileIds;
+    Counters.Counter private _workIds;
+    mapping(address => bool) public isVerified;
 
-    function mintProfileNft(address user, string memory tokenURI) public returns(uint256) {
-        uint256 newItemId = _tokenIds.current();
+    function mintWorkNft(address user, string memory tokenURI) public returns(uint256) {
+        // same require function becuase if users verified then theyve created a profile nft 
+        require(isVerified[user] == true); 
+        
+        uint256 newItemId = _workIds.current();
         _mint(user, newItemId);
         _setTokenURI(newItemId, tokenURI);
 
-        _tokenIds.increment();
+        _workIds.increment();
+        return newItemId;
+    }
+
+    function mintProfileNft(address user, string memory tokenURI) public returns(uint256) {
+        require(isVerified[user] == true);
+        uint256 newItemId = _profileIds.current();
+        _mint(user, newItemId);
+        _setTokenURI(newItemId, tokenURI);
+
+        _profileIds.increment();
         return newItemId;
     }
 
@@ -59,5 +74,6 @@ contract Contract is ERC721URIStorage {
         // logic
         emit ProofVerified(receiver);
         //mintProfileNft(receiver, tokenURI);
+        isVerified[msg.sender] = true;
     }
 }
