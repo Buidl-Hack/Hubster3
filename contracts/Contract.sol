@@ -25,10 +25,10 @@ contract Contract is ERC721URIStorage {
     Counters.Counter private _profileIds;
     Counters.Counter private _workIds;
     mapping(address => bool) public isVerified;
+    mapping(address => bool) public hasProfileNft;
 
     function mintWorkNft(address user, string memory tokenURI) public returns(uint256) {
-        // same require function becuase if users verified then theyve created a profile nft 
-        require(isVerified[user] == true); 
+        require(hasProfileNft[user] == true, "User needs profile nft"); 
         
         uint256 newItemId = _workIds.current();
         _mint(user, newItemId);
@@ -39,12 +39,13 @@ contract Contract is ERC721URIStorage {
     }
 
     function mintProfileNft(address user, string memory tokenURI) public returns(uint256) {
-        require(isVerified[user] == true);
+        require(isVerified[user] == true, "Verifiy with WorldId");
         uint256 newItemId = _profileIds.current();
         _mint(user, newItemId);
         _setTokenURI(newItemId, tokenURI);
 
         _profileIds.increment();
+        hasProfileNft[user] = true;
         return newItemId;
     }
 
