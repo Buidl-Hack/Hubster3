@@ -14,6 +14,7 @@ contract Contract is ERC721URIStorage {
     IWorldID internal immutable worldId;
     uint256 internal immutable groupId = 1;
     mapping(uint256 => bool) internal nullifierHashes;
+    string actionId = "wid_b33e93be8e4ac6de8c4508c532ef8e4a";
 
     event ProofVerified(address user);
 
@@ -30,11 +31,11 @@ contract Contract is ERC721URIStorage {
     function mintWorkNft(address user, string memory tokenURI) public returns(uint256) {
         require(hasProfileNft[user] == true, "User needs profile nft"); 
         
-        uint256 newItemId = _workIds.current();
+        uint256 newItemId = _profileIds.current();
         _mint(user, newItemId);
         _setTokenURI(newItemId, tokenURI);
 
-        _workIds.increment();
+        _profileIds.increment();
         return newItemId;
     }
 
@@ -65,7 +66,7 @@ contract Contract is ERC721URIStorage {
             groupId,
             abi.encodePacked(receiver).hashToField(),
             nullifierHash,
-            abi.encodePacked(address(this)).hashToField(),
+            abi.encodePacked(actionId).hashToField(),
             proof
         );
 
@@ -73,8 +74,9 @@ contract Contract is ERC721URIStorage {
         nullifierHashes[nullifierHash] = true;
 
         // logic
-        emit ProofVerified(receiver);
+        
         //mintProfileNft(receiver, tokenURI);
         isVerified[msg.sender] = true;
+        emit ProofVerified(receiver);
     }
 }
