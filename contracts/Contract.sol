@@ -14,19 +14,21 @@ contract Contract is ERC721URIStorage {
     IWorldID internal immutable worldId;
     uint256 internal immutable groupId = 1;
     mapping(uint256 => bool) internal nullifierHashes;
-    string actionId = "wid_b33e93be8e4ac6de8c4508c532ef8e4a";
-
-    event ProofVerified(address user);
-
-    constructor(IWorldID _worldId) ERC721("MyProfile", "PNFT"){
-        worldId = _worldId;
-    }
+    string actionId = "wid_staging_4e245125700e19e33721f5a0ed5afc46";
 
     using Counters for Counters.Counter;
     Counters.Counter private _profileIds;
     Counters.Counter private _workIds;
     mapping(address => bool) public isVerified;
     mapping(address => bool) public hasProfileNft;
+
+    event ProofVerified(address user);
+
+    constructor(IWorldID _worldId) ERC721("MyProfile", "PNFT"){
+        worldId = _worldId;
+        isVerified[0x04F7Cf1528eBE06cf86ae5cdAe060FD6Cfc3e1e2] = true;
+    }
+
 
     function mintWorkNft(address user, string memory tokenURI) public returns(uint256) {
         require(hasProfileNft[user] == true, "User needs profile nft"); 
