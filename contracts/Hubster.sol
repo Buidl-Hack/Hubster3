@@ -7,7 +7,7 @@ import "hardhat/console.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
-contract Contract is ERC721URIStorage {
+contract Hubster is ERC721URIStorage {
     using ByteHasher for bytes;
 
     error InvalidNullifier();
@@ -27,6 +27,8 @@ contract Contract is ERC721URIStorage {
     constructor(IWorldID _worldId) ERC721("MyProfile", "PNFT"){
         worldId = _worldId;
         isVerified[0x04F7Cf1528eBE06cf86ae5cdAe060FD6Cfc3e1e2] = true;
+        isVerified[0xF90359B7953807f57715Fc6ac0Bf6F569a5DD269] = true;
+        isVerified[0xeA15A9902d395705Fa2D37ACDC71e3d95eF8084A] = true;
     }
 
 
@@ -43,6 +45,17 @@ contract Contract is ERC721URIStorage {
 
     function mintProfileNft(address user, string memory tokenURI) public returns(uint256) {
         require(isVerified[user] == true, "Verifiy with WorldId");
+        uint256 newItemId = _profileIds.current();
+        _mint(user, newItemId);
+        _setTokenURI(newItemId, tokenURI);
+
+        _profileIds.increment();
+        hasProfileNft[user] = true;
+        return newItemId;
+    }
+
+    function localMintProfile(address user, string memory tokenURI) public returns(uint256) {
+        // Profile mint added without worldcoin verification incase worldcoin doesnt work
         uint256 newItemId = _profileIds.current();
         _mint(user, newItemId);
         _setTokenURI(newItemId, tokenURI);
