@@ -6,7 +6,7 @@ async function main() {
         .then(res => res.json() as Promise<{ key: string; value: string }[]>)
         .then(res => res.find(({ key }) => key === 'staging.semaphore.wld.eth').value)
 
-    const ContractFactory = await ethers.getContractFactory('Contract')
+    const ContractFactory = await ethers.getContractFactory('Hubster')
     const contract = await ContractFactory.deploy(
         worldIDAddress
     )
